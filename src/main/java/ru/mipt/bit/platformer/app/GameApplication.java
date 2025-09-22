@@ -86,7 +86,7 @@ public class GameApplication implements ApplicationListener {
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(playerRectangle, player.getPlayerCoordinates(), player.getPlayerDestinationCoordinates(), player.getPlayerMovementProgress());
-
+        player.updateProgress(Gdx.graphics.getDeltaTime());
         // render each tile of the level
         levelRenderer.render();
 

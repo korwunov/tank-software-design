@@ -6,8 +6,8 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
 public class Player {
-    private GridPoint2 playerDestinationCoordinates;
-    private GridPoint2 playerCoordinates;
+    public GridPoint2 playerDestinationCoordinates;
+    public GridPoint2 playerCoordinates;
     public float playerRotation;
     private float playerMovementProgress;
     private static final float MOVEMENT_SPEED = 0.4f;

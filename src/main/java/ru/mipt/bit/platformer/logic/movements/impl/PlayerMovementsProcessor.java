@@ -21,10 +21,10 @@ public class PlayerMovementsProcessor implements MovementsProcessor {
         if (isEqual(player.getPlayerMovementProgress(), 1f)) {
             if (collisionDetector.isMovePossible(player.getPlayerCoordinates(), direction, obstacles)) {
                 switch (direction) {
-                    case UP -> player.getPlayerDestinationCoordinates().y++;
-                    case LEFT -> player.getPlayerDestinationCoordinates().x--;
-                    case DOWN -> player.getPlayerDestinationCoordinates().y--;
-                    case RIGHT -> player.getPlayerDestinationCoordinates().x++;
+                    case UP -> player.playerDestinationCoordinates.y++;
+                    case LEFT -> player.playerDestinationCoordinates.x--;
+                    case DOWN -> player.playerDestinationCoordinates.y--;
+                    case RIGHT -> player.playerDestinationCoordinates.x++;
                 }
                 player.setPlayerMovementProgress(0f);
             }
