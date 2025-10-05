@@ -17,6 +17,8 @@ import ru.mipt.bit.platformer.input.InputController;
 import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
 import ru.mipt.bit.platformer.logic.movements.MovementsProcessor;
 import ru.mipt.bit.platformer.logic.movements.impl.PlayerMovementsProcessor;
+import ru.mipt.bit.platformer.model.Obstacle;
+import ru.mipt.bit.platformer.model.ObstacleType;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -46,7 +48,7 @@ public class GameApplication implements ApplicationListener {
 
     private Texture greenTreeTexture;
     private TextureRegion treeObstacleGraphics;
-    private ArrayList<GridPoint2> obstacles = new ArrayList<>();
+    private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private Rectangle treeObstacleRectangle = new Rectangle();
 
     @Override
@@ -69,11 +71,9 @@ public class GameApplication implements ApplicationListener {
         player = new Player(new GridPoint2(1, 1));
         movementsProcessor = new PlayerMovementsProcessor();
 
-        greenTreeTexture = new Texture("images/greenTree.png");
-        treeObstacleGraphics = new TextureRegion(greenTreeTexture);
-        obstacles.add(new GridPoint2(1, 3));
-        treeObstacleRectangle = createBoundingRectangle(treeObstacleGraphics);
-        moveRectangleAtTileCenter(groundLayer, treeObstacleRectangle, obstacles.get(0));
+        Obstacle tree = new Obstacle(new GridPoint2(1, 3), ObstacleType.TREE);
+        tree.addObstacleToLevel(groundLayer);
+        obstacles.add(tree);
     }
 
     @Override
