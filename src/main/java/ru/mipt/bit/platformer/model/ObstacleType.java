@@ -1,7 +1,8 @@
 package ru.mipt.bit.platformer.model;
 
 public enum ObstacleType {
-    TREE("images/greenTree.png",true);
+    TREE("images/greenTree.png",true),
+    WALL("images/brick.png", false);
 
     private final String pathToTexture;
     private final boolean isPassable;

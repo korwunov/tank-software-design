@@ -5,7 +5,8 @@ import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Obstacle;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface CollisionDetector {
-    boolean isMovePossible(GridPoint2 fromPosition, Direction direction, ArrayList<Obstacle> obstacles);
+    boolean isMovePossible(GridPoint2 fromPosition, Direction direction, List<Obstacle> obstacles);
 }
