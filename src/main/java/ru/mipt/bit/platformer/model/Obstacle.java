@@ -1,28 +1,24 @@
 package ru.mipt.bit.platformer.model;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.graphics.Drawable;
+import ru.mipt.bit.platformer.graphics.GraphicsObject;
 
 import java.util.Objects;
 
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
-public class Obstacle {
+public class Obstacle extends GraphicsObject implements Drawable {
     private final GridPoint2 position;
     private final ObstacleType type;
 
-    public Obstacle(GridPoint2 position, ObstacleType type) {
+    public Obstacle(GridPoint2 position, ObstacleType type, TiledMapTileLayer layer) {
         this.position = position;
         this.type = type;
-    }
-
-    public void addObstacleToLevel(TiledMapTileLayer layer) {
-        Texture obstacleTexture = new Texture(this.type.getPathToTexture());
-        Rectangle treeObstacleRectangle = createBoundingRectangle(new TextureRegion(obstacleTexture));
-        moveRectangleAtTileCenter(layer, treeObstacleRectangle, this.position);
+        this.rotation = 0f;
+        this.draw(type.getPathToTexture());
+        moveRectangleAtTileCenter(layer, this.rectangle, this.position);
     }
 
     public GridPoint2 getPosition() {

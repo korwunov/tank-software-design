@@ -1,22 +1,26 @@
 package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.graphics.Drawable;
+import ru.mipt.bit.platformer.graphics.GraphicsObject;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-public class Player {
+public class Player extends GraphicsObject implements Drawable {
     public GridPoint2 playerDestinationCoordinates;
     public GridPoint2 playerCoordinates;
-    public float playerRotation;
+
     private float playerMovementProgress;
     private static final float MOVEMENT_SPEED = 0.4f;
+    private static final String PATH_TO_PLAYER_TEXTURE = "images/tank_blue.png";
 
     public Player(GridPoint2 startCoordinates) {
         this.playerDestinationCoordinates = new GridPoint2(startCoordinates);
         this.playerCoordinates = new GridPoint2(startCoordinates);
-        this.playerRotation = 0f;
+        this.rotation = 0f;
         this.playerMovementProgress = 1f;
+        this.draw(PATH_TO_PLAYER_TEXTURE);
     }
 
     public float getPlayerMovementProgress() {
@@ -36,7 +40,7 @@ public class Player {
     }
 
     public void setPlayerRotation(float playerRotation) {
-        this.playerRotation = playerRotation;
+        this.rotation = playerRotation;
     }
 
     public GridPoint2 getPlayerDestinationCoordinates() {
@@ -48,7 +52,7 @@ public class Player {
     }
 
     public float getPlayerRotation() {
-        return playerRotation;
+        return rotation;
     }
 
     public void updateProgress(float time) {

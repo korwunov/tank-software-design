@@ -5,11 +5,7 @@ import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Obstacle;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 
 public class PlayerCollisionDetector implements CollisionDetector {
     @Override
