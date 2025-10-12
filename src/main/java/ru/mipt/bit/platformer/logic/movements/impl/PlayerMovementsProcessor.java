@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.logic.movements.impl;
 
-import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.input.InputController;
+import com.badlogic.gdx.Gdx;
+import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
 import ru.mipt.bit.platformer.logic.movements.MovementsProcessor;
 import ru.mipt.bit.platformer.model.Direction;
@@ -11,11 +11,13 @@ import ru.mipt.bit.platformer.model.Player;
 import java.util.ArrayList;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 
 public class PlayerMovementsProcessor implements MovementsProcessor {
-    private PlayerCollisionDetector collisionDetector = new PlayerCollisionDetector();
+    private CollisionDetector collisionDetector;
+
+    public PlayerMovementsProcessor(CollisionDetector collisionDetector) {
+        this.collisionDetector = collisionDetector;
+    }
 
     @Override
     public void processMoveCommand(Player player, Direction direction, ArrayList<Obstacle> obstacles) {
@@ -27,5 +29,6 @@ public class PlayerMovementsProcessor implements MovementsProcessor {
             }
             player.setPlayerRotation(direction.getRotation());
         }
+        player.updateProgress(Gdx.graphics.getDeltaTime());
     }
 }
