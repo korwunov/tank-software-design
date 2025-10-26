@@ -9,6 +9,7 @@ import ru.mipt.bit.platformer.model.Obstacle;
 import ru.mipt.bit.platformer.model.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
@@ -20,7 +21,7 @@ public class PlayerMovementsProcessor implements MovementsProcessor {
     }
 
     @Override
-    public void processMoveCommand(Player player, Direction direction, ArrayList<Obstacle> obstacles) {
+    public void processMoveCommand(Player player, Direction direction, List<Obstacle> obstacles) {
         if (isEqual(player.getPlayerMovementProgress(), 1f)) {
             //Проверка на коллизию
             if (collisionDetector.isMovePossible(player.getPlayerCoordinates(), direction, obstacles)) {

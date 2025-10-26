@@ -13,12 +13,12 @@ public class Obstacle extends GraphicsObject implements Drawable {
     private final GridPoint2 position;
     private final ObstacleType type;
 
-    public Obstacle(GridPoint2 position, ObstacleType type, TiledMapTileLayer layer) {
+    public Obstacle(GridPoint2 position, ObstacleType type, TileGrid layer) {
         this.position = position;
         this.type = type;
         this.rotation = 0f;
         this.draw(type.getPathToTexture());
-        moveRectangleAtTileCenter(layer, this.rectangle, this.position);
+        moveRectangleAtTileCenter(layer.getTileLayer(), this.rectangle, this.position);
     }
 
     public GridPoint2 getPosition() {
