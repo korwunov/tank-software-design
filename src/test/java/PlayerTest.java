@@ -12,7 +12,7 @@ public class PlayerTest {
     @BeforeEach
     void beforeEachTest() {
         this.position = new GridPoint2(1, 2);
-        this.player = new Player(this.position);
+        this.player = new Player(this.position, 1f);
     }
 
     @Test

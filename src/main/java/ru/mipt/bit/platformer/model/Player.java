@@ -15,11 +15,11 @@ public class Player extends GraphicsObject implements Drawable {
     private static final float MOVEMENT_SPEED = 0.4f;
     private static final String PATH_TO_PLAYER_TEXTURE = "images/tank_blue.png";
 
-    public Player(GridPoint2 startCoordinates) {
+    public Player(GridPoint2 startCoordinates, float playerMovementProgress) {
         this.playerDestinationCoordinates = new GridPoint2(startCoordinates);
         this.playerCoordinates = new GridPoint2(startCoordinates);
         this.rotation = 0f;
-        this.playerMovementProgress = 1f;
+        this.playerMovementProgress = playerMovementProgress;
         this.draw(PATH_TO_PLAYER_TEXTURE);
     }
 
