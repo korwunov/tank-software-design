@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.command.Command;
 import ru.mipt.bit.platformer.command.CommandContext;
-import ru.mipt.bit.platformer.command.MoveCommand;
+import ru.mipt.bit.platformer.command.impl.MoveCommand;
 import ru.mipt.bit.platformer.config.GameConfigurationSource;
 import ru.mipt.bit.platformer.graphics.DrawableUpdater;
 import ru.mipt.bit.platformer.graphics.GraphicsObject;

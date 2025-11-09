@@ -19,6 +19,7 @@ public class KeyboardInputController implements InputController {
         if (isKeyPressed(Input.Keys.DOWN, Input.Keys.S)) {events.add(InputEvent.move(Direction.DOWN));}
         if (isKeyPressed(Input.Keys.RIGHT, Input.Keys.D)) {events.add(InputEvent.move(Direction.RIGHT));}
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {events.add(InputEvent.shoot());}
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {events.add(InputEvent.toggleHealth());}
         return events;
     }
 

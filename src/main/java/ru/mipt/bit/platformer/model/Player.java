@@ -10,8 +10,9 @@ import static com.badlogic.gdx.math.MathUtils.isEqual;
 public class Player extends GraphicsObject implements Drawable {
     public GridPoint2 playerDestinationCoordinates;
     public GridPoint2 playerCoordinates;
-
     private float playerMovementProgress;
+    private int health;
+
     private static final float MOVEMENT_SPEED = 0.4f;
     private static final String PATH_TO_PLAYER_TEXTURE = "images/tank_blue.png";
 
@@ -19,6 +20,7 @@ public class Player extends GraphicsObject implements Drawable {
         this.playerDestinationCoordinates = new GridPoint2(startCoordinates);
         this.playerCoordinates = new GridPoint2(startCoordinates);
         this.rotation = 0f;
+        this.health = 100;
         this.playerMovementProgress = playerMovementProgress;
         this.draw(PATH_TO_PLAYER_TEXTURE);
     }
