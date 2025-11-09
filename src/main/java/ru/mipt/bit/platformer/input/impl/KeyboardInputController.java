@@ -3,17 +3,31 @@ package ru.mipt.bit.platformer.input.impl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import ru.mipt.bit.platformer.input.InputController;
+import ru.mipt.bit.platformer.input.InputEvent;
 import ru.mipt.bit.platformer.model.Direction;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class KeyboardInputController implements InputController {
     @Override
-    public Optional<Direction> move() {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) { return Optional.of(Direction.UP); }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) { return Optional.of(Direction.DOWN); }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) { return Optional.of(Direction.LEFT); }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) { return Optional.of(Direction.RIGHT); }
-        return Optional.empty();
+    public Collection<InputEvent> poll() {
+        List<InputEvent> events = new ArrayList<>();
+        if (isKeyPressed(Input.Keys.UP, Input.Keys.W)) {events.add(InputEvent.move(Direction.UP));}
+        if (isKeyPressed(Input.Keys.LEFT, Input.Keys.A)) {events.add(InputEvent.move(Direction.LEFT));}
+        if (isKeyPressed(Input.Keys.DOWN, Input.Keys.S)) {events.add(InputEvent.move(Direction.DOWN));}
+        if (isKeyPressed(Input.Keys.RIGHT, Input.Keys.D)) {events.add(InputEvent.move(Direction.RIGHT));}
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {events.add(InputEvent.shoot());}
+        return events;
+    }
+
+    private boolean isKeyPressed(int... keys) {
+        for (int key : keys) {
+            if (Gdx.input.isKeyPressed(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

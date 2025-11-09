@@ -10,6 +10,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.command.Command;
+import ru.mipt.bit.platformer.command.CommandContext;
+import ru.mipt.bit.platformer.command.MoveCommand;
 import ru.mipt.bit.platformer.config.GameConfigurationSource;
 import ru.mipt.bit.platformer.graphics.DrawableUpdater;
 import ru.mipt.bit.platformer.graphics.GraphicsObject;
@@ -18,8 +21,6 @@ import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
-import ru.mipt.bit.platformer.logic.movements.MovementsProcessor;
-import ru.mipt.bit.platformer.logic.movements.impl.PlayerMovementsProcessor;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -28,22 +29,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static com.badlogic.gdx.math.MathUtils.random;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class GameApplication implements ApplicationListener {
     private Batch batch;
-
     private InputController input;
-
-    private MovementsProcessor movementsProcessor;
-
     private DrawableUpdater drawableUpdater;
 
     private TiledMap level;
     private World world;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
+    private CollisionDetector collisionDetector;
 
     private LevelLoader levelLoader;
 
@@ -64,20 +62,15 @@ public class GameApplication implements ApplicationListener {
         TileGrid tileGrid = new TileGrid(groundLayer);
         levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
         //dependency injection for movementProcessor
-        CollisionDetector collisionDetector = new PlayerCollisionDetector();
+        collisionDetector = new PlayerCollisionDetector();
 
-        movementsProcessor = new PlayerMovementsProcessor(collisionDetector);
-
-        Obstacle tree = new Obstacle(new GridPoint2(1, 3), ObstacleType.TREE, world.getTileGrid());
-        obstacles.add(tree);
-
-//        world = new World(new Player(new GridPoint2(1, 1), 1f), obstacles, tileGrid);
         try {
             world = levelLoader.loadLevel(tileGrid);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        objectsToUpdateWhileRender.add(world.getPlayer());
+        spawnBots(tileGrid);
+        objectsToUpdateWhileRender.addAll(world.getAllTanks());
         objectsToUpdateWhileRender.addAll(world.getObstacles());
     }
 
@@ -87,7 +80,11 @@ public class GameApplication implements ApplicationListener {
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
-        input.move().ifPresent(direction -> movementsProcessor.processMoveCommand(world.getPlayer(), direction, world.getObstacles()));
+        List<Command> commands = getCommands();
+        CommandContext context = new CommandContext(world);
+        for (Command command : commands) {
+            command.execute(world, context);
+        }
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(world.getPlayer().getRectangle(), world.getPlayer().getPlayerCoordinates(), world.getPlayer().getPlayerDestinationCoordinates(), world.getPlayer().getPlayerMovementProgress());
@@ -120,5 +117,52 @@ public class GameApplication implements ApplicationListener {
         world.getPlayer().getTexture().dispose();
         level.dispose();
         batch.dispose();
+    }
+
+    private void spawnBots(TileGrid tileGrid) {
+        int botsToCreate = 3;
+        float botSpeed = world.getPlayer().getPlayerMovementProgress();
+        for (int i = 0; i < botsToCreate; i++) {
+            GridPoint2 pos = findFreeCell(tileGrid);
+            if (pos == null) break;
+            world.getBotTanks().add(new Player(pos, botSpeed));
+        }
+    }
+
+    private GridPoint2 findFreeCell(TileGrid grid) {
+        GridPoint2 size = grid.getGridSize();
+        for (int attempts = 0; attempts < size.x * size.y * 2; attempts++) {
+            int x = random.nextInt(size.x);
+            int y = random.nextInt(size.y);
+            GridPoint2 p = new GridPoint2(x, y);
+            if (!grid.isValidPosition(p)) continue;
+            if (world.hasObstacleAt(p)) continue;
+            if (world.getPlayer().getPlayerCoordinates().equals(p)) continue;
+            boolean occupied = false;
+            for (Player bot : world.getBotTanks()) {
+                if (bot.getPlayerCoordinates().equals(p)) {
+                    occupied = true;
+                    break;
+                }
+            }
+            if (!occupied) return p;
+        }
+        return null;
+    }
+
+    private List<Command> getCommands() {
+        List<Command> commands = new ArrayList<>();
+        for (var event : input.poll()) {
+            switch (event.getAction()) {
+                case MOVE -> event.getDirection().ifPresent(direction -> commands.add(new MoveCommand(world.getPlayer(), direction, this.collisionDetector)));
+                default -> throw new RuntimeException("Unrecognized command");
+            }
+        }
+
+        for (Player bot : world.getBotTanks()) {
+            commands.add(new MoveCommand(bot, Direction.getRandomDirection(), collisionDetector));
+        }
+
+        return commands;
     }
 }

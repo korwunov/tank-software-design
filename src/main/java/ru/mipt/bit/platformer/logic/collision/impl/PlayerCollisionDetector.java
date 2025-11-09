@@ -11,6 +11,6 @@ public class PlayerCollisionDetector implements CollisionDetector {
     @Override
     public boolean isMovePossible(GridPoint2 fromPosition, Direction direction, List<Obstacle> obstacles) {
         GridPoint2 candidate = fromPosition.add(direction.getX(), direction.getY());
-        return obstacles.stream().filter(obstacle -> !obstacle.getType().isPassable()).anyMatch(obstacle -> obstacle.getPosition().equals(candidate));
+        return obstacles.stream().filter(obstacle -> !obstacle.getType().isPassable()).noneMatch(obstacle -> obstacle.getPosition().equals(candidate));
     }
 }
