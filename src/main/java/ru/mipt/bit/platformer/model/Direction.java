@@ -1,5 +1,10 @@
 package ru.mipt.bit.platformer.model;
 
+import java.util.Arrays;
+import java.util.Random;
+
+import static com.badlogic.gdx.math.MathUtils.random;
+
 public enum Direction {
     UP(0, 1, 90f),
     DOWN(0, -1, -90f),
@@ -26,5 +31,9 @@ public enum Direction {
 
     public float getRotation() {
         return rotation;
+    }
+
+    public static Direction getRandomDirection() {
+        return (Direction) Arrays.stream(Direction.values()).toArray()[random.nextInt(Direction.values().length)];
     }
 }

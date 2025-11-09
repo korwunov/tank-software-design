@@ -16,9 +16,14 @@ import java.util.List;
 
 public class FileLevelLoader implements LevelLoader {
 
-    record LevelData(GridPoint2 player, List<Obstacle> obstaclesList) {
-        static final GridPoint2 playerPosition = null;
-        static final List<Obstacle> obstacles = null;
+    private static class LevelData {
+        GridPoint2 playerPosition = null;
+        List<Obstacle> obstacles = null;
+
+        LevelData(GridPoint2 player, List<Obstacle> obstaclesList) {
+            this.playerPosition = player;
+            this.obstacles = obstaclesList;
+        }
     }
 
     private final String filePath;
@@ -37,8 +42,8 @@ public class FileLevelLoader implements LevelLoader {
     public World loadLevel(TileGrid tileGrid) throws IOException {
         List<String> lines = readLevelFile();
         LevelData levelData = getLevelDataFromFile(lines, tileGrid);
-        Player player = new Player(LevelData.playerPosition, playerSpeed);
-        return new World(player, LevelData.obstacles, tileGrid);
+        Player player = new Player(levelData.playerPosition, playerSpeed);
+        return new World(player, levelData.obstacles, tileGrid);
     }
 
     private LevelData getLevelDataFromFile(List<String> lines, TileGrid grid) {
