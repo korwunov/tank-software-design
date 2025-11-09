@@ -1,3 +1,5 @@
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 @ExtendWith(MockitoExtension.class)
 public class CollisionTest {
@@ -23,9 +26,10 @@ public class CollisionTest {
 
     @Test
     void testCanMove() {
-        level = new TmxMapLoader().load("level.tmx");
+        TiledMap level = new TmxMapLoader().load("level.tmx");
+        TiledMapTileLayer groundLayer = getSingleLayer(level);
         List<Obstacle> obstacles = List.of(
-                new Obstacle(new GridPoint2(2, 3), ObstacleType.TREE, new TileGrid())
+                new Obstacle(new GridPoint2(2, 3), ObstacleType.TREE, new TileGrid(groundLayer))
         );
 
         assertTrue(collisionDetector.isMovePossible(new GridPoint2(1, 3), Direction.UP, obstacles));
