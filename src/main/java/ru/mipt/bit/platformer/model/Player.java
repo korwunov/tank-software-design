@@ -74,4 +74,27 @@ public class Player extends GraphicsObject implements Drawable {
     public int getMaxHealth() {
         return maxHealth;
     }
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
+    public Direction getFacingDirection() {
+        for (Direction dir : Direction.values()) {
+            if (Math.abs(dir.getRotation() - rotation) < 0.1f) {
+                return dir;
+            }
+        }
+        return Direction.RIGHT;
+    }
+
+    public Bullet shoot() {
+        Direction facing = getFacingDirection();
+        GridPoint2 bulletStart = new GridPoint2(playerCoordinates).add(facing.getX(), facing.getY());;
+        return new Bullet(bulletStart, facing);
+    }
+
+    public void takeHit(int damage) {
+        this.health = Math.max(0, health - damage);
+    }
 }

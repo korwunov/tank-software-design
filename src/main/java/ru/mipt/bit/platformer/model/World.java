@@ -1,11 +1,9 @@
 package ru.mipt.bit.platformer.model;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.logic.observer.Observer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class World {
@@ -13,6 +11,8 @@ public class World {
     private final List<Obstacle> obstacles;
     private final TileGrid tileGrid;
     private final Set<Player> botTanks;
+    private final Set<Bullet> bullets;
+    private final List<Observer> observers;
     private boolean healthStatsVisible;
 
     public World(Player player, List<Obstacle> obstacles, TileGrid tileGrid) {
@@ -20,6 +20,8 @@ public class World {
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = new HashSet<>();
+        this.bullets = new HashSet<>();
+        this.observers = new ArrayList<>();
         this.healthStatsVisible = false;
     }
 
@@ -28,6 +30,8 @@ public class World {
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = botTanks;
+        this.bullets = new HashSet<>();
+        this.observers = new ArrayList<>();
         this.healthStatsVisible = false;
     }
 
@@ -79,7 +83,49 @@ public class World {
         healthStatsVisible = !healthStatsVisible;
     }
 
-    public void setHealthStatsVisible(boolean visible) {
-        this.healthStatsVisible = visible;
+    public void addObserver(Observer observer) {
+        this.observers.add(observer);
+        notifyInitObjects(observer);
+    }
+
+    public Set<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public void addBullet(Bullet b) {
+        bullets.add(b);
+        notifyAddedObject(b);
+    }
+
+    public void removeBullet(Bullet b) {
+        bullets.remove(b);
+        notifyRemovedObject(b);
+    }
+
+    public Player getTankAt(GridPoint2 position) {
+        if (player.getPlayerCoordinates().equals(position) && player.isAlive()) {
+            return player;
+        }
+        for (Player tank : botTanks) {
+            if (tank.getPlayerCoordinates().equals(position) && tank.isAlive()) {
+                return tank;
+            }
+        }
+        return null;
+    }
+
+    private void notifyInitObjects(Observer observer) {
+        observer.onObjectAdded(player);
+        for (Obstacle o : obstacles) observer.onObjectAdded(o);
+        for (Player bot : botTanks) observer.onObjectAdded(bot);
+        for (Bullet b : bullets) observer.onObjectAdded(b);
+    }
+
+    private void notifyAddedObject(Object obj) {
+        for (Observer o : observers) o.onObjectAdded(obj);
+    }
+
+    private void notifyRemovedObject(Object obj) {
+        for (Observer o : observers) o.onObjectRemoved(obj);
     }
 }

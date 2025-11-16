@@ -10,7 +10,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import ru.mipt.bit.platformer.graphics.render.impl.BulletRenderer;
 import ru.mipt.bit.platformer.graphics.render.impl.HealthStatRenderer;
+import ru.mipt.bit.platformer.logic.collision.impl.BulletCollisionDetector;
 import ru.mipt.bit.platformer.logic.command.Command;
 import ru.mipt.bit.platformer.logic.command.CommandContext;
 import ru.mipt.bit.platformer.logic.command.impl.MoveCommand;
@@ -22,7 +24,9 @@ import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
+import ru.mipt.bit.platformer.logic.command.impl.ShootCommand;
 import ru.mipt.bit.platformer.logic.command.impl.ToggleHealthStatCommand;
+import ru.mipt.bit.platformer.logic.shooting.PlayerShootingProcessor;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -39,12 +43,15 @@ public class GameApplication implements ApplicationListener {
     private InputController input;
     private DrawableUpdater drawableUpdater;
     private HealthStatRenderer healthStatRenderer;
+    private BulletRenderer bulletRenderer;
 
     private TiledMap level;
     private World world;
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
     private CollisionDetector collisionDetector;
+    private BulletCollisionDetector bulletCollisionDetector;
+    private PlayerShootingProcessor playerShootingProcessor;
 
     private final List<GraphicsObject> objectsToUpdateWhileRender = new ArrayList<>();
 
@@ -64,6 +71,8 @@ public class GameApplication implements ApplicationListener {
         LevelLoader levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
         //dependency injection for movementProcessor
         collisionDetector = new PlayerCollisionDetector();
+        bulletCollisionDetector = new BulletCollisionDetector();
+        playerShootingProcessor = new PlayerShootingProcessor(bulletCollisionDetector);
 
         try {
             world = levelLoader.loadLevel(tileGrid);
@@ -74,6 +83,7 @@ public class GameApplication implements ApplicationListener {
         objectsToUpdateWhileRender.addAll(world.getAllTanks());
         objectsToUpdateWhileRender.addAll(world.getObstacles());
         healthStatRenderer = new HealthStatRenderer(world.isHealthStatsVisible());
+        bulletRenderer = new BulletRenderer(16f);
     }
 
     @Override
@@ -90,11 +100,12 @@ public class GameApplication implements ApplicationListener {
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(world.getPlayer().getRectangle(), world.getPlayer().getPlayerCoordinates(), world.getPlayer().getPlayerDestinationCoordinates(), world.getPlayer().getPlayerMovementProgress());
-
+        playerShootingProcessor.updateBulletsState(world, 1);
         // render each tile of the level
         batch.begin();
         levelRenderer.render();
         healthStatRenderer.setHealthStatsVisible(world.isHealthStatsVisible());
+        for (Bullet b : world.getBullets()) bulletRenderer.render(b, batch, tileMovement);
         for (Player p : world.getAllTanks()) healthStatRenderer.render(p, batch, tileMovement);
 
         drawableUpdater.update(this.objectsToUpdateWhileRender, batch);
@@ -119,6 +130,8 @@ public class GameApplication implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
+        healthStatRenderer.dispose();
+        bulletRenderer.dispose();
         world.getObstacles().forEach(o -> o.getTexture().dispose());
         world.getPlayer().getTexture().dispose();
         level.dispose();
@@ -162,12 +175,20 @@ public class GameApplication implements ApplicationListener {
             switch (event.getAction()) {
                 case MOVE -> event.getDirection().ifPresent(direction -> commands.add(new MoveCommand(world.getPlayer(), direction, this.collisionDetector)));
                 case TOGGLE_HEALTH -> commands.add(new ToggleHealthStatCommand());
+                case SHOOT -> commands.add(new ShootCommand(world.getPlayer()));
                 default -> throw new RuntimeException("Unrecognized command");
             }
         }
 
         for (Player bot : world.getBotTanks()) {
-            commands.add(new MoveCommand(bot, Direction.getRandomDirection(), collisionDetector));
+            if (bot.isAlive()) {
+                if (random.nextFloat() > 0.5f) {
+                    commands.add(new MoveCommand(bot, Direction.getRandomDirection(), collisionDetector));
+                } else {
+                    commands.add(new ShootCommand(bot));
+                }
+            }
+
         }
 
         return commands;
