@@ -93,4 +93,8 @@ public class Player extends GraphicsObject implements Drawable {
         GridPoint2 bulletStart = new GridPoint2(playerCoordinates).add(facing.getX(), facing.getY());;
         return new Bullet(bulletStart, facing);
     }
+
+    public void takeHit(int damage) {
+        this.health = Math.max(0, health - damage);
+    }
 }

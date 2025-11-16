@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.graphics.render.impl.BulletRenderer;
 import ru.mipt.bit.platformer.graphics.render.impl.HealthStatRenderer;
+import ru.mipt.bit.platformer.logic.collision.impl.BulletCollisionDetector;
 import ru.mipt.bit.platformer.logic.command.Command;
 import ru.mipt.bit.platformer.logic.command.CommandContext;
 import ru.mipt.bit.platformer.logic.command.impl.MoveCommand;
@@ -25,6 +26,7 @@ import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
 import ru.mipt.bit.platformer.logic.command.impl.ShootCommand;
 import ru.mipt.bit.platformer.logic.command.impl.ToggleHealthStatCommand;
+import ru.mipt.bit.platformer.logic.shooting.PlayerShootingProcessor;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -48,6 +50,8 @@ public class GameApplication implements ApplicationListener {
     private MapRenderer levelRenderer;
     private TileMovement tileMovement;
     private CollisionDetector collisionDetector;
+    private BulletCollisionDetector bulletCollisionDetector;
+    private PlayerShootingProcessor playerShootingProcessor;
 
     private final List<GraphicsObject> objectsToUpdateWhileRender = new ArrayList<>();
 
@@ -67,6 +71,8 @@ public class GameApplication implements ApplicationListener {
         LevelLoader levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
         //dependency injection for movementProcessor
         collisionDetector = new PlayerCollisionDetector();
+        bulletCollisionDetector = new BulletCollisionDetector();
+        playerShootingProcessor = new PlayerShootingProcessor(bulletCollisionDetector);
 
         try {
             world = levelLoader.loadLevel(tileGrid);
@@ -94,7 +100,7 @@ public class GameApplication implements ApplicationListener {
 
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(world.getPlayer().getRectangle(), world.getPlayer().getPlayerCoordinates(), world.getPlayer().getPlayerDestinationCoordinates(), world.getPlayer().getPlayerMovementProgress());
-
+        playerShootingProcessor.updateBulletsState(world, 1);
         // render each tile of the level
         batch.begin();
         levelRenderer.render();

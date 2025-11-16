@@ -13,7 +13,23 @@ public class BulletCollisionDetector {
         TANK, OBSTACLE, BULLET, BOUND
     }
 
-    public record CollisionResult(CollisionType type, Player hittedPlayer) {}
+    public static class CollisionResult {
+        private CollisionType collisionType;
+        private Player player;
+
+        public CollisionResult(CollisionType type, Player hittedPlayer) {
+            this.collisionType = type;
+            this.player = hittedPlayer;
+        }
+
+        public CollisionType getCollisionType() {
+            return collisionType;
+        }
+
+        public Player getHittedPlayer() {
+            return player;
+        }
+    }
 
     public List<CollisionResult> getCollisionStatus(World world, Bullet bullet) {
         List<CollisionResult> results = new ArrayList<>();
