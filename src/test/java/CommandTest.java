@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import ru.mipt.bit.platformer.command.CommandContext;
+import ru.mipt.bit.platformer.logic.command.CommandContext;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.model.TileGrid;

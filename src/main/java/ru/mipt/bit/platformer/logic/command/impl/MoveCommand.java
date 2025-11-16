@@ -1,8 +1,8 @@
-package ru.mipt.bit.platformer.command.impl;
+package ru.mipt.bit.platformer.logic.command.impl;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.command.Command;
-import ru.mipt.bit.platformer.command.CommandContext;
+import ru.mipt.bit.platformer.logic.command.Command;
+import ru.mipt.bit.platformer.logic.command.CommandContext;
 import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.model.Direction;
 import ru.mipt.bit.platformer.model.Player;

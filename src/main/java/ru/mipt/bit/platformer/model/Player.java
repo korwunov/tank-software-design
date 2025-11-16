@@ -12,6 +12,7 @@ public class Player extends GraphicsObject implements Drawable {
     public GridPoint2 playerCoordinates;
     private float playerMovementProgress;
     private int health;
+    private final int maxHealth;
 
     private static final float MOVEMENT_SPEED = 0.4f;
     private static final String PATH_TO_PLAYER_TEXTURE = "images/tank_blue.png";
@@ -21,6 +22,7 @@ public class Player extends GraphicsObject implements Drawable {
         this.playerCoordinates = new GridPoint2(startCoordinates);
         this.rotation = 0f;
         this.health = 100;
+        this.maxHealth = 100;
         this.playerMovementProgress = playerMovementProgress;
         this.draw(PATH_TO_PLAYER_TEXTURE);
     }
@@ -63,5 +65,13 @@ public class Player extends GraphicsObject implements Drawable {
             // record that the player has reached his/her destination
             playerCoordinates.set(playerDestinationCoordinates);
         }
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 }
