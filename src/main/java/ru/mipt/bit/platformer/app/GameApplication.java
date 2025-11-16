@@ -22,6 +22,7 @@ import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
+import ru.mipt.bit.platformer.logic.command.impl.ToggleHealthStatCommand;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -160,6 +161,7 @@ public class GameApplication implements ApplicationListener {
         for (var event : input.poll()) {
             switch (event.getAction()) {
                 case MOVE -> event.getDirection().ifPresent(direction -> commands.add(new MoveCommand(world.getPlayer(), direction, this.collisionDetector)));
+                case TOGGLE_HEALTH -> commands.add(new ToggleHealthStatCommand());
                 default -> throw new RuntimeException("Unrecognized command");
             }
         }
