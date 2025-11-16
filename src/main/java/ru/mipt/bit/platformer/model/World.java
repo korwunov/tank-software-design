@@ -13,6 +13,7 @@ public class World {
     private final List<Obstacle> obstacles;
     private final TileGrid tileGrid;
     private final Set<Player> botTanks;
+    private final Set<Bullet> bullets;
     private boolean healthStatsVisible;
 
     public World(Player player, List<Obstacle> obstacles, TileGrid tileGrid) {
@@ -20,6 +21,7 @@ public class World {
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = new HashSet<>();
+        this.bullets = new HashSet<>();
         this.healthStatsVisible = false;
     }
 
@@ -28,6 +30,7 @@ public class World {
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = botTanks;
+        this.bullets = new HashSet<>();
         this.healthStatsVisible = false;
     }
 
@@ -79,7 +82,27 @@ public class World {
         healthStatsVisible = !healthStatsVisible;
     }
 
-    public void setHealthStatsVisible(boolean visible) {
-        this.healthStatsVisible = visible;
+    public Set<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public void addBullet(Bullet b) {
+        bullets.add(b);
+    }
+
+    public void removeBullet(Bullet b) {
+        bullets.remove(b);
+    }
+
+    public Player getTankAt(GridPoint2 position) {
+        if (player.getPlayerCoordinates().equals(position) && player.isAlive()) {
+            return player;
+        }
+        for (Player tank : botTanks) {
+            if (tank.getPlayerCoordinates().equals(position) && tank.isAlive()) {
+                return tank;
+            }
+        }
+        return null;
     }
 }

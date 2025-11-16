@@ -13,14 +13,15 @@ import ru.mipt.bit.platformer.util.TileMovement;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
-public class HealthStatRenderer implements Renderer {
+public class HealthStatRenderer implements Renderer, Disposable {
     private boolean isHealthStatsVisible;
+    private final Texture texture;
     private final TextureRegion textureRegion;
 
     public HealthStatRenderer(boolean isHealthStatsVisible) {
         this.isHealthStatsVisible = isHealthStatsVisible;
-        Texture texture = createPixelTexture();
-        this.textureRegion = new TextureRegion(texture);
+        this.texture = createPixelTexture();
+        this.textureRegion = new TextureRegion(this.texture);
     }
 
     @Override
@@ -54,5 +55,10 @@ public class HealthStatRenderer implements Renderer {
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return texture;
+    }
+
+    @Override
+    public void dispose() {
+        texture.dispose();
     }
 }
