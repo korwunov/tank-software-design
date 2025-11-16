@@ -13,9 +13,9 @@ public class DrawableUpdater {
         this.batch = batch;
     }
 
-    public void update(List<GraphicsObject> objectsToUpdate) {
-        this.batch.begin();
+    public void update(List<GraphicsObject> objectsToUpdate, Batch batch) {
+        batch.begin();
         objectsToUpdate.forEach(o -> drawTextureRegionUnscaled(this.batch, o.getGraphics(), o.getRectangle(), o.getRotation()));
-        this.batch.end();
+        batch.end();
     }
 }

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.config;
+package ru.mipt.bit.platformer.level.config;
 
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.level.impl.FileLevelLoader;

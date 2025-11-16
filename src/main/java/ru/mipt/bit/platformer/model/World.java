@@ -13,12 +13,14 @@ public class World {
     private final List<Obstacle> obstacles;
     private final TileGrid tileGrid;
     private final Set<Player> botTanks;
+    private boolean healthStatsVisible;
 
     public World(Player player, List<Obstacle> obstacles, TileGrid tileGrid) {
         this.player = player;
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = new HashSet<>();
+        this.healthStatsVisible = false;
     }
 
     public World(Player player, List<Obstacle> obstacles, TileGrid tileGrid, Set<Player> botTanks) {
@@ -26,6 +28,7 @@ public class World {
         this.obstacles = obstacles;
         this.tileGrid = tileGrid;
         this.botTanks = botTanks;
+        this.healthStatsVisible = false;
     }
 
     public Player getPlayer() {
@@ -66,5 +69,17 @@ public class World {
                 .filter(obstacle -> obstacle.getPosition().equals(position))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean isHealthStatsVisible() {
+        return healthStatsVisible;
+    }
+
+    public void toggleHealthStats() {
+        healthStatsVisible = !healthStatsVisible;
+    }
+
+    public void setHealthStatsVisible(boolean visible) {
+        this.healthStatsVisible = visible;
     }
 }

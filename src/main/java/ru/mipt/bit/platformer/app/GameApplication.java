@@ -10,10 +10,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.command.Command;
-import ru.mipt.bit.platformer.command.CommandContext;
-import ru.mipt.bit.platformer.command.MoveCommand;
-import ru.mipt.bit.platformer.config.GameConfigurationSource;
+import ru.mipt.bit.platformer.graphics.render.impl.HealthStatRenderer;
+import ru.mipt.bit.platformer.logic.command.Command;
+import ru.mipt.bit.platformer.logic.command.CommandContext;
+import ru.mipt.bit.platformer.logic.command.impl.MoveCommand;
+import ru.mipt.bit.platformer.level.config.GameConfigurationSource;
 import ru.mipt.bit.platformer.graphics.DrawableUpdater;
 import ru.mipt.bit.platformer.graphics.GraphicsObject;
 import ru.mipt.bit.platformer.input.InputController;
@@ -21,6 +22,7 @@ import ru.mipt.bit.platformer.input.impl.KeyboardInputController;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.logic.collision.CollisionDetector;
 import ru.mipt.bit.platformer.logic.collision.impl.PlayerCollisionDetector;
+import ru.mipt.bit.platformer.logic.command.impl.ToggleHealthStatCommand;
 import ru.mipt.bit.platformer.model.*;
 import ru.mipt.bit.platformer.util.TileMovement;
 
@@ -36,6 +38,7 @@ public class GameApplication implements ApplicationListener {
     private Batch batch;
     private InputController input;
     private DrawableUpdater drawableUpdater;
+    private HealthStatRenderer healthStatRenderer;
 
     private TiledMap level;
     private World world;
@@ -43,10 +46,7 @@ public class GameApplication implements ApplicationListener {
     private TileMovement tileMovement;
     private CollisionDetector collisionDetector;
 
-    private LevelLoader levelLoader;
-
-    private List<GraphicsObject> objectsToUpdateWhileRender = new ArrayList<>();
-    private List<Obstacle> obstacles = new ArrayList<>();
+    private final List<GraphicsObject> objectsToUpdateWhileRender = new ArrayList<>();
 
     @Override
     public void create() {
@@ -54,13 +54,14 @@ public class GameApplication implements ApplicationListener {
         input = new KeyboardInputController();
         drawableUpdater = new DrawableUpdater(this.batch);
 
+
         // load level tiles
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         TileGrid tileGrid = new TileGrid(groundLayer);
-        levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
+        LevelLoader levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
         //dependency injection for movementProcessor
         collisionDetector = new PlayerCollisionDetector();
 
@@ -72,6 +73,7 @@ public class GameApplication implements ApplicationListener {
         spawnBots(tileGrid);
         objectsToUpdateWhileRender.addAll(world.getAllTanks());
         objectsToUpdateWhileRender.addAll(world.getObstacles());
+        healthStatRenderer = new HealthStatRenderer(world.isHealthStatsVisible());
     }
 
     @Override
@@ -90,9 +92,13 @@ public class GameApplication implements ApplicationListener {
         tileMovement.moveRectangleBetweenTileCenters(world.getPlayer().getRectangle(), world.getPlayer().getPlayerCoordinates(), world.getPlayer().getPlayerDestinationCoordinates(), world.getPlayer().getPlayerMovementProgress());
 
         // render each tile of the level
+        batch.begin();
         levelRenderer.render();
+        healthStatRenderer.setHealthStatsVisible(world.isHealthStatsVisible());
+        for (Player p : world.getAllTanks()) healthStatRenderer.render(p, batch, tileMovement);
 
-        drawableUpdater.update(this.objectsToUpdateWhileRender);
+        drawableUpdater.update(this.objectsToUpdateWhileRender, batch);
+        batch.end();
     }
 
     @Override
@@ -155,6 +161,7 @@ public class GameApplication implements ApplicationListener {
         for (var event : input.poll()) {
             switch (event.getAction()) {
                 case MOVE -> event.getDirection().ifPresent(direction -> commands.add(new MoveCommand(world.getPlayer(), direction, this.collisionDetector)));
+                case TOGGLE_HEALTH -> commands.add(new ToggleHealthStatCommand());
                 default -> throw new RuntimeException("Unrecognized command");
             }
         }
