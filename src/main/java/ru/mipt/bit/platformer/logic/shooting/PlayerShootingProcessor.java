@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer.logic.shooting;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.logic.collision.impl.BulletCollisionDetector;
 import ru.mipt.bit.platformer.model.Bullet;
 import ru.mipt.bit.platformer.model.Player;
@@ -8,9 +10,11 @@ import ru.mipt.bit.platformer.model.World;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PlayerShootingProcessor {
     private final BulletCollisionDetector collisionDetector;
 
+    @Autowired
     public PlayerShootingProcessor(BulletCollisionDetector collisionDetector) {
         this.collisionDetector = collisionDetector;
     }

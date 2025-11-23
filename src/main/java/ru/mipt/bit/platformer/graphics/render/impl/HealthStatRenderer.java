@@ -7,12 +7,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.graphics.render.Renderer;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 
+@Component
 public class HealthStatRenderer implements Renderer, Disposable {
     private boolean isHealthStatsVisible;
     private final Texture texture;

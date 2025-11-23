@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.level.impl;
 
 import com.badlogic.gdx.math.GridPoint2;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.model.*;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class RandomLevelLoader implements LevelLoader {
     private final Random random;
     private final float playerMovementSpeed;

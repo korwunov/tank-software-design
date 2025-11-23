@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.logic.collision.impl;
 
 import com.badlogic.gdx.math.GridPoint2;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.model.Bullet;
 import ru.mipt.bit.platformer.model.Player;
 import ru.mipt.bit.platformer.model.World;
@@ -8,6 +9,7 @@ import ru.mipt.bit.platformer.model.World;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BulletCollisionDetector {
     public enum CollisionType {
         TANK, OBSTACLE, BULLET, BOUND

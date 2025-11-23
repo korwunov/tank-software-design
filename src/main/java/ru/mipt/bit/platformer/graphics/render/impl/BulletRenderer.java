@@ -4,9 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.model.Bullet;
 import ru.mipt.bit.platformer.util.TileMovement;
 
+@Component
 public class BulletRenderer {
     private final ShapeRenderer shapeRenderer;
     private final float bulletSize;

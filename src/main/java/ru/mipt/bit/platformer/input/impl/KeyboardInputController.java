@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer.input.impl;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.input.InputController;
 import ru.mipt.bit.platformer.input.InputEvent;
 import ru.mipt.bit.platformer.model.Direction;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Component
 public class KeyboardInputController implements InputController {
     @Override
     public Collection<InputEvent> poll() {

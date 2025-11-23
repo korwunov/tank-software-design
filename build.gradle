@@ -24,6 +24,7 @@ dependencies {
     implementation deps.gdx.gdx
     implementation deps.gdx.backend_lwjgl3
     implementation deps.gdx.platform_desktop
+    implementation "org.springframework.boot:spring-boot-starter:3.5.8"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
     testImplementation 'org.assertj:assertj-core:3.23.1'
     testImplementation 'org.mockito:mockito-core:4.11.0'

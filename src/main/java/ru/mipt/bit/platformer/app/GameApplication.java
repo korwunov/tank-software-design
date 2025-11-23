@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.mipt.bit.platformer.graphics.render.impl.BulletRenderer;
 import ru.mipt.bit.platformer.graphics.render.impl.HealthStatRenderer;
 import ru.mipt.bit.platformer.logic.collision.impl.BulletCollisionDetector;
@@ -41,6 +42,8 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 public class GameApplication implements ApplicationListener {
     private Batch batch;
     private InputController input;
+    private AnnotationConfigApplicationContext context;
+
     private DrawableUpdater drawableUpdater;
     private HealthStatRenderer healthStatRenderer;
     private BulletRenderer bulletRenderer;
@@ -60,6 +63,7 @@ public class GameApplication implements ApplicationListener {
         batch = new SpriteBatch();
         input = new KeyboardInputController();
         drawableUpdater = new DrawableUpdater(this.batch);
+        context = new AnnotationConfigApplicationContext();
 
 
         // load level tiles
@@ -69,10 +73,9 @@ public class GameApplication implements ApplicationListener {
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
         TileGrid tileGrid = new TileGrid(groundLayer);
         LevelLoader levelLoader = GameConfigurationSource.getDefault().createLevelLoader();
-        //dependency injection for movementProcessor
-        collisionDetector = new PlayerCollisionDetector();
-        bulletCollisionDetector = new BulletCollisionDetector();
-        playerShootingProcessor = new PlayerShootingProcessor(bulletCollisionDetector);
+        collisionDetector = context.getBean(PlayerCollisionDetector.class);
+        bulletCollisionDetector = context.getBean(BulletCollisionDetector.class);
+        playerShootingProcessor = context.getBean(PlayerShootingProcessor.class);
 
         try {
             world = levelLoader.loadLevel(tileGrid);
@@ -82,7 +85,7 @@ public class GameApplication implements ApplicationListener {
         spawnBots(tileGrid);
         objectsToUpdateWhileRender.addAll(world.getAllTanks());
         objectsToUpdateWhileRender.addAll(world.getObstacles());
-        healthStatRenderer = new HealthStatRenderer(world.isHealthStatsVisible());
+        healthStatRenderer = context.getBean(HealthStatRenderer.class);
         bulletRenderer = new BulletRenderer(16f);
     }
 
