@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.level.impl;
 
 import com.badlogic.gdx.math.GridPoint2;
+import org.springframework.stereotype.Component;
 import ru.mipt.bit.platformer.level.LevelLoader;
 import ru.mipt.bit.platformer.model.*;
 
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class FileLevelLoader implements LevelLoader {
 
     private static class LevelData {
@@ -35,7 +37,7 @@ public class FileLevelLoader implements LevelLoader {
 
     public FileLevelLoader(String filePath, float playerSpeed) {
         this.filePath = filePath;
-        this.playerSpeed = playerSpeed;
+         this.playerSpeed = playerSpeed;
     }
 
     @Override
